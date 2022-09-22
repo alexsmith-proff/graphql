@@ -12,6 +12,11 @@ export class BookResolver {
         return await this.bookService.findAll()
     }
 
+    @Query()
+    async book(@Args('id') id: string){
+        return await this.bookService.findById(id)
+    }
+
     @Mutation('createBook')
     async create(@Args('input') args: BookDTO): Promise<Book> {
         return await this.bookService.create(args)

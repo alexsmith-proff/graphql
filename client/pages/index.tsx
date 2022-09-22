@@ -1,40 +1,38 @@
 ﻿import React, { FC, useState } from 'react'
 import MainLayout from '../layouts/MainLayout'
 import client from '../util/apollo-client'
-import { useRouter } from 'next/router'
-import { GET_BOOKS, CREATE_BOOK, GET_AUTHORS } from '../graphql/books.graphql'
+import { GET_BOOKS, CREATE_BOOK, GET_AUTHORS, GET_BOOK_BY_ID } from '../graphql/books.graphql'
 import { useQuery, useMutation } from '@apollo/client'
 
-import { IBook } from '../interfaces/book'
+import { IAuthor } from '../interfaces/author'
 
 import s from './index.module.scss'
 
 
 type IndexProps = {
-  books: IBook[]
+  authors: IAuthor[]
 }
 
-const Index: React.FC<IndexProps> = ({ books }) => {
-  const router = useRouter()
-
-
-
-  const { loading, error, data } = useQuery(GET_AUTHORS)
-  // console.log(data);
-  const [createBook] = useMutation(CREATE_BOOK, {
-    onCompleted: (data) => {
-      window.location.reload()
-    }
-  })
-
+const Index: React.FC<IndexProps> = ({ authors }) => {
+  const [idBook, setIdBook] = useState<string>('1')
   const [title, setTitle] = useState<string>('')
   const [pages, setPages] = useState<number>(0)
   const [authorId, setAuthorId] = useState<string>('')
 
-  const [nameAuthor, setNameAuthor] = useState<string>('')
-  const [age, setAge] = useState<number>(0)
+  const { loading: allBooksLoading, error: allBooksError, data: allBooks } = useQuery(GET_BOOKS)
+  const { loading: bookLoading, error: bookError, data: bookData} = useQuery(GET_BOOK_BY_ID, {
+    variables: {ids: idBook}
+  })
+  console.log(bookData);
+  
+  const [createBook] = useMutation(CREATE_BOOK, {
+    onCompleted: () => {
+      window.location.reload()
+    }
+  })
 
-
+  
+  
 
   const addBook = (e) => {
     e.preventDefault()
@@ -48,7 +46,6 @@ const Index: React.FC<IndexProps> = ({ books }) => {
         }
       }
     })
-    // router.push('/')
   }
 
   return (
@@ -62,8 +59,7 @@ const Index: React.FC<IndexProps> = ({ books }) => {
             <div className={s.listTitle}>Books authors</div>
             <ul className={s.list}>
               {
-                data &&
-                data.authors.map((item, index) => (
+                authors.map((item, index) => (
                   <li className={s.item} key={index}>
                     <div className={s.param}>
                       <span className={s.name}>ID:</span>
@@ -104,7 +100,8 @@ const Index: React.FC<IndexProps> = ({ books }) => {
             <div className={s.listTitle}>Books</div>
             <ul className={s.list}>
               {
-                books.map((item, index) => (
+                allBooks &&
+                allBooks.books.map((item, index) => (
                   <li className={s.item} key={index}>
                     <div className={s.param}>
                       <span className={s.name}>ID:</span>
@@ -156,12 +153,12 @@ const Index: React.FC<IndexProps> = ({ books }) => {
 
 export async function getServerSideProps() {
   const { data } = await client.query({
-    query: GET_BOOKS,
+    query: GET_AUTHORS,
   })
 
   return {
     props: {
-      books: data.books
+      authors: data.authors
     },
   }
 }

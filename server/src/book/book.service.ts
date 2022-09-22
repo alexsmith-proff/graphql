@@ -9,6 +9,9 @@ export class BookService {
     findAll(): Book[] {
         return this.books
     }
+    findById(id: string): Book {
+        return this.books.find(item => id == item.id)
+    }
     create(bookDTO: BookDTO): Book {
         const bookID: number = this.books.length + 1
         const book: Book = new Book()

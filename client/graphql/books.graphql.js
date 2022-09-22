@@ -13,8 +13,18 @@ query GetBooks {
   }
 }
 `
+export const GET_BOOK_BY_ID = gql`
+query GetBookById($ids: String) {
+  book(id: $ids) {
+      id
+      title
+      pages
+  }
+}
+`
+
 export const GET_AUTHORS = gql`
-query GetAuthorss {
+query GetAuthors {
   authors {
       id
       name

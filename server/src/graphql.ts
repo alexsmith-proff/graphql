@@ -30,6 +30,8 @@ export abstract class IQuery {
     abstract authors(): Nullable<Nullable<Author>[]> | Promise<Nullable<Nullable<Author>[]>>;
 
     abstract books(): Nullable<Nullable<Book>[]> | Promise<Nullable<Nullable<Book>[]>>;
+
+    abstract book(id?: Nullable<string>): Nullable<Book> | Promise<Nullable<Book>>;
 }
 
 export abstract class IMutation {

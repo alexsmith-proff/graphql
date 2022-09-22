@@ -27,6 +27,10 @@ type Query {
   books: [Book]
 }
 
+type Query {
+  book(id: String): Book
+}
+
 type Mutation {
   createBook(input: NewBook!): Book
 }
